@@ -70,11 +70,9 @@ String checkUID(String uid) {
   if (dataFile) {
     while (dataFile.available()) {
       String line = dataFile.readStringUntil('\n');
-      int separatorIndex = line.indexOf(",");
-      String storedUID = line.substring(0, separatorIndex);
+      String storedUID = getValue(line, ',', 0);
       if (storedUID == uid) {
-        int separatorIndex2 = line.indexOf(",", separatorIndex + 1);
-        String storedOwner = line.substring(separatorIndex + 1, separatorIndex2);
+        String storedOwner = getValue(line, ',', 1);
         Serial.println(storedOwner);
         dataFile.close();
         return storedOwner;

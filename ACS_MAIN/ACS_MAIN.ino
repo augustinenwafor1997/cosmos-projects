@@ -9,4 +9,5 @@ void loop() {
   processToken(decode(checkScanner()));
   entryControls();
   exitControls();
+  espCommands();
 }
