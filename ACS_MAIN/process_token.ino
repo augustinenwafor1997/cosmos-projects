@@ -8,7 +8,7 @@ void processToken(const char* data) {
     Serial.println(uid);
     Serial.print("TOKEN: ");
     Serial.println(token);
-    Serial.print("OWNER: ");
+//    Serial.print("OWNER: ");
     String storedOwner = checkUID(uid);
     if (storedOwner == "admin" || storedOwner == "tenant") {
       Serial.println("stored owner is admin or tenant");
@@ -73,6 +73,7 @@ String checkUID(String uid) {
       String storedUID = getValue(line, ',', 0);
       if (storedUID == uid) {
         String storedOwner = getValue(line, ',', 1);
+        Serial.print("OWNER: ");
         Serial.println(storedOwner);
         dataFile.close();
         return storedOwner;
@@ -94,6 +95,7 @@ bool checkToken(String token) {
   boolean tokenExists = false;
   while (file.available()) {
     String line = file.readStringUntil('\n');
+    //Serial.println(line);
     if (line.startsWith(token)) {
       tokenExists = true;
       break;
@@ -144,4 +146,4 @@ void storeToken(String token) {
   file.close();
   Serial.println("Token logged.");
 }
-//1300451140723810 1202735273120100 1043521722810002 1202735273195100 1197762179911000 1209459324297100
+//1300451140723810 1202735273120100 1043521722810002 1202735273195100 1197762179911000 1209459324297100 get,1/1/23,20/2/23

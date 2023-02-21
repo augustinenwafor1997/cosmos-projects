@@ -25,8 +25,8 @@ const int exitAmberLed = 12;
 const int exitGreenLed = LED_BUILTIN;
 const int exitBuzzer = 13;
 //const int exitSolenoid = 5;
-#define QRSerial Serial
-#define ESPSerial Serial2
+#define QRSerial Serial2
+#define ESPSerial Serial
 
 enum doorState {closed, open} entryDoorState;
 doorState exitDoorState;

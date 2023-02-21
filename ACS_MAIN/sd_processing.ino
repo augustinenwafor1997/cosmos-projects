@@ -6,6 +6,10 @@ void espCommands() {
       if (input.startsWith("get,")) {
         String startDateStr = getValue(input, ',', 1);
         String endDateStr = getValue(input, ',', 2);
+        Serial.print("START DATE: ");
+        Serial.println(startDateStr);
+        Serial.print("END DATE: ");
+        Serial.println(endDateStr);
         int day = getValue(startDateStr, '/', 0).toInt();
         int month = getValue(startDateStr, '/', 1).toInt();
         int year = getValue(startDateStr, '/', 2).toInt();
@@ -16,17 +20,26 @@ void espCommands() {
         DateTime endEpochTime = DateTime(year, month, day, 0, 0, 0);
         DateTime currentTime = rtc.now();
         DateTime currentEpochTime = DateTime(currentTime.year(), currentTime.month(), currentTime.day(), 0, 0, 0);
+        Serial.print("START EPOCH TIME: ");
+        Serial.println(startEpochTime.unixtime());
+        Serial.print("END EPOCH TIME: ");
+        Serial.println(endEpochTime.unixtime());
+        Serial.print("CURRENT EPOCH TIME: ");
+        Serial.println(currentEpochTime.unixtime());
         if (startEpochTime.unixtime() > endEpochTime.unixtime() || startEpochTime.unixtime() > currentEpochTime.unixtime() || endEpochTime.unixtime() > currentEpochTime.unixtime()) {
           Serial.println("INVALID SELECTION");
           ESPSerial.println("INVALID!");
         }
         else {
-          File file = SD.open("logs.csv", FILE_WRITE);
+          File file = SD.open("logs.csv", FILE_READ);
           if (file) {
             String temp = "";
             bool found = false;
+            Serial.println("READING FILE...");
             while (file.available()) {
               String line = file.readStringUntil('\n');
+//              Serial.print("DATA: ");
+//              Serial.println(line);
               String dateStr = getValue(line, ',', 2);
               day = getValue(dateStr, '/', 0).toInt();
               month = getValue(dateStr, '/', 1).toInt();
@@ -51,7 +64,7 @@ void espCommands() {
                  */
                  
                  //destroy file afterwords
-                 //SD.remove("logdata.csv");
+                 SD.remove("logdata.csv");
               }
             }
             else{
@@ -85,14 +98,14 @@ void storeUID(String uid, String owner, String fileName) {
       String dataToWrite = uid + "," + owner + "\n";
       dataFile.print(dataToWrite);
       Serial.println("UID stored");
-      ESPSerial.println("UID stored");
+      ESPSerial.println("user activated");
       dataFile.close();
     } else {
       Serial.println("error opening file");
-      ESPSerial.println("error");
+      ESPSerial.println("error!");
     }
   } else {
-    ESPSerial.println("UID already exists");
+    ESPSerial.println("user already exists!");
   }
 }
 
@@ -121,14 +134,14 @@ void deleteUID(String uid, String owner, String fileName) {
       file.close();
 
       Serial.println("UID deleted successfully.");
-      ESPSerial.println("UID deleted successfully.");
+      ESPSerial.println("user deactivated");
     } else {
       Serial.println("Error opening file.");
-      ESPSerial.println("Error!");
+      ESPSerial.println("error!");
     }
   } else {
     Serial.println("UID not found.");
-    ESPSerial.println("UID not found!");
+    ESPSerial.println("user not found!");
   }
 }
 
