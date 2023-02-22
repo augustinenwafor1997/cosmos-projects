@@ -1,6 +1,7 @@
 #ifndef _DECLARATIONS_H_
 #define _DECLARATIONS_H_
 
+#include <EEPROM.h>
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
@@ -30,6 +31,7 @@ const int exitBuzzer = 13;
 
 enum doorState {closed, open} entryDoorState;
 doorState exitDoorState;
+unsigned long tokenCount;
 //struct breakup
 //{
 //  int User_ID;

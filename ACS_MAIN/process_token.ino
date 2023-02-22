@@ -8,24 +8,24 @@ void processToken(const char* data) {
     Serial.println(uid);
     Serial.print("TOKEN: ");
     Serial.println(token);
-//    Serial.print("OWNER: ");
+    //    Serial.print("OWNER: ");
     String storedOwner = checkUID(uid);
-    if (storedOwner == "admin" || storedOwner == "tenant") {
+    if (storedOwner == "admin" || storedOwner == "tenant" || storedOwner == "cleaner") {
       Serial.println("stored owner is admin or tenant");
       //unlock door
       if (!digitalRead(entrySwitch) && digitalRead(entrySolenoid)) {
-          digitalWrite(entrySolenoid, LOW);//unlock
-          Serial.println("door unlocked");
-          digitalWrite(buzzer, HIGH);
-          delay(200);
-          digitalWrite(buzzer, LOW);
-          digitalWrite(amberLed, LOW);
-          digitalWrite(greenLed, HIGH);
-          Serial.println("GREEN LED ON");
-          entryChrono.restart();
-          //log usage
-          logUsage(uid, storedOwner);
-        }
+        digitalWrite(entrySolenoid, LOW);//unlock
+        Serial.println("door unlocked");
+        digitalWrite(buzzer, HIGH);
+        delay(200);
+        digitalWrite(buzzer, LOW);
+        digitalWrite(amberLed, LOW);
+        digitalWrite(greenLed, HIGH);
+        Serial.println("GREEN LED ON");
+        entryChrono.restart();
+        //log usage
+        logUsage(uid, storedOwner);
+      }
 
     }
     else if (storedOwner == "user") {
@@ -47,7 +47,7 @@ void processToken(const char* data) {
           digitalWrite(amberLed, LOW);
           digitalWrite(greenLed, HIGH);
           Serial.println("GREEN LED ON");
-          
+
           entryChrono.restart();
           //log usage
           logUsage(uid, storedOwner);
@@ -144,6 +144,39 @@ void storeToken(String token) {
   }
   file.println(token);
   file.close();
+  tokenCount += 1;
+  EEPROM.put(0 * sizeof(tokenCount), tokenCount);
   Serial.println("Token logged.");
 }
 //1300451140723810 1202735273120100 1043521722810002 1202735273195100 1197762179911000 1209459324297100 get,1/1/23,20/2/23
+
+void clearTokenLog() {
+  DateTime now = rtc.now();
+  if (tokenCount > 10000 && now.hour() > 21) {
+    File file = SD.open("tokens.txt", FILE_READ);
+    if (!file) {
+      Serial.println("Failed to open file for writing");
+      return;
+    }
+    tokenCount = 0;
+    long count = 0;
+    String temp = "";
+    while (file.available()) {
+      String line = file.readStringUntil('\n');
+      count ++;
+      if (count > 5000) {
+        temp += line + "\n";
+        tokenCount++;
+      }
+    }
+    file.close();
+    EEPROM.put(0 * sizeof(tokenCount), tokenCount);
+    SD.remove("tokens.txt");
+    file = SD.open("tokens.txt", FILE_WRITE);
+    if (file) {
+      file.print(temp);
+      file.close();
+      Serial.println("5000 tokens deleted successfully");
+    }
+  }
+}

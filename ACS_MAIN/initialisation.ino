@@ -33,10 +33,10 @@ void initialisation() {
 
   digitalWrite(exitSolenoid, HIGH);//lock
   digitalWrite(exitAmberLed, HIGH);
-
-//  HardwareTimer *MyTim = new HardwareTimer(TIM1);
-//  MyTim->pause();
-//  MyTim->setOverflow(10000, HERTZ_FORMAT);
-//  MyTim->attachInterrupt(exitControls);
-//  MyTim->resume();
+  //EEPROM.get(0 * sizeof(tokenCount), tokenCount);
+  //  HardwareTimer *MyTim = new HardwareTimer(TIM1);
+  //  MyTim->pause();
+  //  MyTim->setOverflow(10000, HERTZ_FORMAT);
+  //  MyTim->attachInterrupt(exitControls);
+  //  MyTim->resume();
 }

@@ -10,4 +10,5 @@ void loop() {
   entryControls();
   exitControls();
   espCommands();
+  clearTokenLog();
 }
