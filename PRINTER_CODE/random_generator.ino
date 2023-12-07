@@ -45,7 +45,6 @@ unsigned int getTrueRotateRandomint() {
         }
       }
     }
-
   }
   lastint ^= (lastint >> 3) ^ (lastint << 5) ^ (lastint >> 4);
   lastint ^= finalint;

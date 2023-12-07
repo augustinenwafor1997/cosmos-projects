@@ -85,19 +85,19 @@ const char* encode() {
   int pair = getPairAndErr();
   int error = getPairAndErr();
 
-  Serial.print("\n\n\n\n");
+  // Serial.print("\n\n\n\n");
 
-  Serial.print("RD PARITY: ");
-  Serial.println(PARITY);
+  // Serial.print("RD PARITY: ");
+  // Serial.println(PARITY);
 
-  Serial.print("RD TOKEN: ");
-  Serial.println(tok);
+  // Serial.print("RD TOKEN: ");
+  // Serial.println(tok);
 
-  Serial.print("RD PAIR: ");
-  Serial.println(pair);
+  // Serial.print("RD PAIR: ");
+  // Serial.println(pair);
 
-  Serial.print("RD ERROR: ");
-  Serial.println(error);
+  // Serial.print("RD ERROR: ");
+  // Serial.println(error);
 
   char lstr[19];
   sprintf(lstr, "%d%d%d%d", UID, tok, pair, error);
