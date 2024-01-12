@@ -5,7 +5,6 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 #include <EEPROM.h>
-//#include <ArduinoJson.h>
 
 #include <ShiftRegister74HC595.h>
 
@@ -72,14 +71,14 @@ void loop() {
 
     // JsonDocument doc;
     DeserializationError error = deserializeJson(doc, text);
-
+    Serial.println(text);
     if (!error) {
       uint8_t comm = doc["comm"];
       uint8_t ledIndex = (comm - 1) * 3;  // Calculate LED index based on pipe
       sr.set(comm + 14, HIGH);            //set LED high to show comm is ongoing
-      sr.setNoUpdate(ledIndex, doc["ph-f"]);
-      sr.setNoUpdate(ledIndex + 1, doc["ph-d"]);
-      sr.setNoUpdate(ledIndex + 2, doc["ph-hv"]);
+      sr.setNoUpdate(ledIndex, doc["f"]);
+      sr.setNoUpdate(ledIndex + 1, doc["d"]);
+      sr.setNoUpdate(ledIndex + 2, doc["hv"]);
       sr.updateRegisters();
 
       //Check if any error led is On
