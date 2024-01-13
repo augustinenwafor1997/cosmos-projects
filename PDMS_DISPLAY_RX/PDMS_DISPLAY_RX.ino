@@ -71,7 +71,7 @@ void loop() {
   receiveData();
   controlAlarm();
 }
-void receiveData(){
+void receiveData() {
   if (radio.available()) {
 
     char text[32] = "";
@@ -130,7 +130,7 @@ void receiveData(){
       // }
       //Do something if there is communication loss
       // set the alarm led to On/Off depeding on state
-      
+
 
       // sr.set(comm + 14, LOW);  //set LED low to show comm is finished
 
@@ -146,8 +146,13 @@ void controlAlarm() {
   for (int i = 0; i < 5; i++) {
     if (storedIDs[i] && millis() - lastReceivedTimes[i] >= 5000) {
       anyLoss = true;
-      sr.set(i + 15, LOW);  //set LED low to show comm is finished
-      break;
+      uint8_t ledIndex = i * 3;  // Calculate LED index based on array position
+      sr.setNoUpdate(ledIndex, LOW);
+      sr.setNoUpdate(ledIndex + 1, LOW);
+      sr.setNoUpdate(ledIndex + 2, LOW);
+      sr.setNoUpdate(i + 15, LOW);  //set LED low to show comm is finished
+      sr.updateRegisters();
+      //break;
     }
   }
 
@@ -193,7 +198,7 @@ void controlAlarm() {
         }
       }
 
-      if (allValuesZero && alarmCheckCount >= 6 && !anyLoss) {  //check that all comms are good too
+      if (allValuesZero && alarmCheckCount >= 6 && anyLoss == false) {  //check that all comms are good too
         alarmFlag = false;
         sr.set(alarmLedPin, LOW);
         alarmCheckCount = 0;
@@ -201,6 +206,9 @@ void controlAlarm() {
     }
   }
 
+  // if (alarmFlag == false && anyLoss == false) {
+  //   sr.set(alarmLedPin, LOW);
+  // }
 
   //control buzzer if any led is On
   if (alarmFlag && millis() - lastBuzzTime >= 5000) {
@@ -208,9 +216,7 @@ void controlAlarm() {
     sr.set(buzzerPin, HIGH);       // Turn on buzzer
     lastBuzzTime = millis();
   }
-  if (millis() >= buzzEndTime) {
+  if (sr.get(buzzerPin) && millis() >= buzzEndTime) {
     sr.set(buzzerPin, LOW);  // Turn off buzzer
   }
-
-  // set the alarm led to On/Off depeding on state
 }
