@@ -57,19 +57,48 @@ void setup() {
 
 void loop() {
 
-//TEST CODE
-JSONVar data;
+  //TEST CODE
+  JSONVar data;
 
   data["comm"] = addrDec;
   data["f"] = 0;
   data["d"] = 0;
-  data["hv"] = 0;
+  data["hv"] = 1;
 
   String dataString = JSON.stringify(data);
-//const char test[] = "leonardo";
-radio.write(&dataString[0], dataString.length());
-delay(2000);
+  //const char test[] = "leonardo";
+  radio.write(&dataString[0], dataString.length());
+  int delay_time = addrDec * 100;
+  delay(delay_time + 1000);
 
+  /////////////////////////////////////////////////
+
+  // data["comm"] = addrDec;
+  // data["f"] = 0;
+  // data["d"] = 0;
+  data["hv"] = 0;
+
+  dataString = JSON.stringify(data);
+  //const char test[] = "leonardo";
+  radio.write(&dataString[0], dataString.length());
+  //int delay_time = addrDec * 100;
+  delay(delay_time + 2000);
+
+  // data["hv"] = 0;
+
+  //   dataString = JSON.stringify(data);
+  //const char test[] = "leonardo";
+  radio.write(&dataString[0], dataString.length());
+  //int delay_time = addrDec * 100;
+  delay(delay_time + 2000);
+
+  // data["hv"] = 0;
+
+  // dataString = JSON.stringify(data);
+  //const char test[] = "leonardo";
+  radio.write(&dataString[0], dataString.length());
+  //int delay_time = addrDec * 100;
+  delay(delay_time + 2000);
 
   // Serial.println(channel);
   // delay(50);  // Delay to prevent overwhelming the serial output

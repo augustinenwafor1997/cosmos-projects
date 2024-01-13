@@ -24,7 +24,11 @@ const int buzzerPin = 21;
 unsigned long lastBuzzTime = 0, buzzEndTime = 0;
 unsigned long lastReceivedTimes[5] = { 0 };  // Track last received times for each ID
 bool storedIDs[5] = { false };               // Track stored IDs in EEPROM
+bool flags[5] = { false };                   // Track error flags
+bool alarmFlag = false;
 
+unsigned long alarmCheckStartTime = 0;
+int alarmCheckCount = 0;
 
 ShiftRegister74HC595<3> sr(2, 3, 4);
 uint8_t channel = 0;
@@ -64,6 +68,10 @@ void setup() {
 
 void loop() {
 
+  receiveData();
+  controlAlarm();
+}
+void receiveData(){
   if (radio.available()) {
 
     char text[32] = "";
@@ -81,28 +89,28 @@ void loop() {
       sr.setNoUpdate(ledIndex + 2, doc["hv"]);
       sr.updateRegisters();
 
-      //Check if any error led is On
-      bool anyLedOn = false;
-      for (int i = 0; i < 15; i++) {
-        if (sr.get(i) == HIGH) {
-          anyLedOn = true;
-          break;
-        }
-      }
+      // //Check if any error led is On
+      // bool anyLedOn = false;
+      // for (int i = 0; i < 15; i++) {
+      //   if (sr.get(i) == HIGH) {
+      //     anyLedOn = true;
+      //     break;
+      //   }
+      // }
 
-      // set the alarm led to On/Off depeding on state
-      sr.set(alarmLedPin, anyLedOn);
+      // // set the alarm led to On/Off depeding on state
+      // sr.set(alarmLedPin, anyLedOn);
       //digitalWrite(alarmLedPin, anyLedOn);
 
-      //control buzzer if any led is On
-      if (anyLedOn && millis() - lastBuzzTime >= 30000) {
-        buzzEndTime = millis() + 500;  // Set buzzer end time (adjust duration as needed)
-        sr.set(buzzerPin, HIGH);       // Turn on buzzer
-        lastBuzzTime = millis();
-      }
-      if (millis() >= buzzEndTime) {
-        sr.set(buzzerPin, LOW);  // Turn off buzzer
-      }
+      // //control buzzer if any led is On
+      // if (anyLedOn && millis() - lastBuzzTime >= 5000) {
+      //   buzzEndTime = millis() + 500;  // Set buzzer end time (adjust duration as needed)
+      //   sr.set(buzzerPin, HIGH);       // Turn on buzzer
+      //   lastBuzzTime = millis();
+      // }
+      // if (millis() >= buzzEndTime) {
+      //   sr.set(buzzerPin, LOW);  // Turn off buzzer
+      // }
 
       // Store ID if not already stored
       if (!storedIDs[comm - 1]) {
@@ -112,18 +120,97 @@ void loop() {
 
       lastReceivedTimes[comm - 1] = millis();
 
-      // Check for communication loss
-      bool anyLoss = false;
-      for (int i = 0; i < 5; i++) {
-        if (storedIDs[i] && millis() - lastReceivedTimes[i] >= 30000) {
-          anyLoss = true;
-          break;
-        }
-      }
+      // // Check for communication loss
+      // bool anyLoss = false;
+      // for (int i = 0; i < 5; i++) {
+      //   if (storedIDs[i] && millis() - lastReceivedTimes[i] >= 5000) {
+      //     anyLoss = true;
+      //     break;
+      //   }
+      // }
       //Do something if there is communication loss
+      // set the alarm led to On/Off depeding on state
+      
+
+      // sr.set(comm + 14, LOW);  //set LED low to show comm is finished
 
     } else {
       Serial.println("JSON parsing error");
     }
   }
+}
+void controlAlarm() {
+
+  // Check for communication loss
+  bool anyLoss = false;
+  for (int i = 0; i < 5; i++) {
+    if (storedIDs[i] && millis() - lastReceivedTimes[i] >= 5000) {
+      anyLoss = true;
+      sr.set(i + 15, LOW);  //set LED low to show comm is finished
+      break;
+    }
+  }
+
+  //Check if any error led is On
+  for (int i = 0; i < 5; i++) {
+    int startPin = i * 3;
+    bool value1 = sr.get(startPin);
+    bool value2 = sr.get(startPin + 1);
+    bool value3 = sr.get(startPin + 2);
+    flags[i] = value1 || value2 || value3;
+  }
+
+  bool anyAlarm = false;
+  for (int i = 0; i < 5; i++) {
+    if (flags[i]) {
+      anyAlarm = true;
+      break;
+    }
+  }
+
+  //Control Alarm
+  if (anyAlarm || anyLoss) {
+    alarmFlag = true;
+    sr.set(alarmLedPin, HIGH);
+  }
+
+  if (alarmCheckCount == 0) {
+    alarmCheckStartTime = millis();
+    alarmCheckCount = 1;
+  }
+
+  // Check for alarm clearing
+  if (alarmCheckCount > 0 && alarmFlag) {  // Only check if alarm is active
+    if (millis() - alarmCheckStartTime >= 1000) {
+      alarmCheckCount++;
+      alarmCheckStartTime = millis();
+
+      bool allValuesZero = true;
+      for (int i = 0; i < 5; i++) {
+        if (flags[i]) {
+          allValuesZero = false;
+          break;
+        }
+      }
+
+      if (allValuesZero && alarmCheckCount >= 6 && !anyLoss) {  //check that all comms are good too
+        alarmFlag = false;
+        sr.set(alarmLedPin, LOW);
+        alarmCheckCount = 0;
+      }
+    }
+  }
+
+
+  //control buzzer if any led is On
+  if (alarmFlag && millis() - lastBuzzTime >= 5000) {
+    buzzEndTime = millis() + 500;  // Set buzzer end time (adjust duration as needed)
+    sr.set(buzzerPin, HIGH);       // Turn on buzzer
+    lastBuzzTime = millis();
+  }
+  if (millis() >= buzzEndTime) {
+    sr.set(buzzerPin, LOW);  // Turn off buzzer
+  }
+
+  // set the alarm led to On/Off depeding on state
 }
