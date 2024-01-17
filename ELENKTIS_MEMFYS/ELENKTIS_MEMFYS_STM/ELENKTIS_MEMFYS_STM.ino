@@ -34,37 +34,6 @@ bool startTimer = true;
 
 
 
-bool hour_timer(unsigned long input) {
-  if (startTimer) {
-    // Start countdowns if not already running
-    if (!timerStarted) {
-      rtc.setEpoch(1451606400);  // Jan 1, 2016
-      timer = rtc.getEpoch();
-      timerStarted = true;
-    }
-
-    // Check for countdown completion
-    if (timerStarted && (rtc.getEpoch() - timer >= input)) {
-      timerStarted = false;
-      timer = 0;
-      startTimer = false;
-      return true;
-    } else {
-      return false;
-    }
-  }
-}
-
-// restart timer
-void restart_hour_timer() {
-  timerStarted = false;
-  startTimer = true;
-}
-
-void stop_hour_timer() {
-  timer = 0;
-  startTimer = false;
-}
 
 void setup() {
   // put your setup code here, to run once:
@@ -187,27 +156,59 @@ void loop() {
   }
 }
 
-bool debounce(int btnIndex, int btn) {
+bool debounse(int btnIndex, int btn) {
   static uint16_t states[3] = { 0 };  // Array to store states for each button
   states[btnIndex] = (states[btnIndex] << 1) | digitalRead(btn) | 0xfe00;
   return (states[btnIndex] == 0xff00) && (states[btnIndex] != 0xffff);
 }
 
 void checkButtonPress() {
-  if (debounce(0, buttonAuto)) {
+  if (debounse(0, buttonAuto)) {
     mode = AUTOMATIC;
     EEPROM.put(0 * sizeof(mode), mode);  //save to EEPROM
     digitalWrite(lightAuto, HIGH);
     restart_hour_timer();
-  } else if (debounce(1, button1)) {
+  } else if (debounse(1, button1)) {
     mode = PUMP1;
     EEPROM.put(0 * sizeof(mode), mode);  //save to EEPROM
     digitalWrite(lightAuto, LOW);
     stop_hour_timer();
-  } else if (debounce(2, button2)) {
+  } else if (debounse(2, button2)) {
     mode = PUMP2;
     EEPROM.put(0 * sizeof(mode), mode);  //save to EEPROM
     digitalWrite(lightAuto, LOW);
     stop_hour_timer();
   }
+}
+
+bool hour_timer(unsigned long input) {
+  if (startTimer) {
+    // Start countdowns if not already running
+    if (!timerStarted) {
+      rtc.setEpoch(1451606400);  // Jan 1, 2016
+      timer = rtc.getEpoch();
+      timerStarted = true;
+    }
+
+    // Check for countdown completion
+    if (timerStarted && (rtc.getEpoch() - timer >= input)) {
+      timerStarted = false;
+      timer = 0;
+      startTimer = false;
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+// restart timer
+void restart_hour_timer() {
+  timerStarted = false;
+  startTimer = true;
+}
+
+void stop_hour_timer() {
+  timer = 0;
+  startTimer = false;
 }
