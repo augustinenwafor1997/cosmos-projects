@@ -3,9 +3,10 @@
 #include <RF24.h>
 #include <EEPROM.h>
 
+//RF24 radio(PA9, PA8);  // nRF24L01 (CE,CSN)
 RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
 
-const byte address[][6] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
+const byte address[][7] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
 
 
 const int channPin1 = 5;
@@ -16,7 +17,21 @@ const int channPin4 = 8;
 const int addPin1 = 2;
 const int addPin2 = 3;
 const int addPin3 = 4;
-uint8_t channel = 0, addrDec = 0;
+
+// const int channPin1 = PB6;
+// const int channPin2 = PB7;
+// const int channPin3 = PB8;
+// const int channPin4 = PB9;
+
+// const int addPin1 = PA10;
+// const int addPin2 = PA11;
+// const int addPin3 = PA12;
+uint8_t channel = 0, addrDec = 0, sendCount = 0;
+
+const int numTransmitters = 5;                // Number of transmitters
+const unsigned long timeSlotDuration = 4000;  // Time slot duration in milliseconds
+
+//int transmitterID = 0;  // Assign a unique ID to each transmitter (1-5)
 
 void setup() {
   pinMode(channPin1, INPUT_PULLUP);
@@ -46,7 +61,7 @@ void setup() {
   }
   radio.begin();
   radio.setPALevel(RF24_PA_MIN);
-  radio.setDataRate(RF24_2MBPS);
+  radio.setDataRate(RF24_250KBPS);
   radio.setChannel(channel);
   radio.openWritingPipe(address[addrDec - 1]);
 
@@ -55,12 +70,49 @@ void setup() {
 
 void loop() {
 
-//TEST CODE
-const char test[] = "leonardo";
-radio.write(&test, sizeof(test));
-delay(2000);
+  //TEST CODE
+  // const char test[] = "address 2";
+  char test[10];  // Adjust array size if needed
+  sprintf(test, "address %d", addrDec);
+  // while (radio.testCarrier()) {
+  //     delay(random(5, 50)); // Random backoff if channel is busy
+  //     Serial.println("delay a little");
+  //   }
+  // radio.write(&test, sizeof(test));
+  // // Collision detection
+  //   if (!radio.testCarrier()) { // If carrier is still clear after transmission
+  //     // Transmission likely successful
+  //     Serial.println(test);
+  //   } else {
+  //     // Collision detected, retry with backoff
+  //     Serial.println("collision");
+  //     delay(random(50, 200)); // Longer backoff for collisions
+  //   }
+
+  unsigned long currentTime = millis();
+  int currentSlot = currentTime / timeSlotDuration;  // Calculate current time slot
+  uint8_t currentAddr = currentSlot % numTransmitters;
+   
+  Serial.print("CURRENT SLOT: ");
+  Serial.println(currentAddr + 1);
+  if (currentSlot % numTransmitters == addrDec - 1) {  // Check if it's this transmitter's slot
+    // Transmit data
+    if (sendCount < 3) {
+      Serial.print("SLOT: ");
+      Serial.println(addrDec);
+      radio.powerUp();
+      radio.write(&test, sizeof(test));
+      sendCount++;
+    }
+  } else {
+    // Wait for the next time slot
+    //Serial.println("wait");
+    radio.powerDown();  // Conserve power during inactive slots
+    sendCount = 0;
+  }
+  //delay(2000);
 
 
-  // Serial.println(channel);
+  //  Serial.println(test);
   // delay(50);  // Delay to prevent overwhelming the serial output
 }

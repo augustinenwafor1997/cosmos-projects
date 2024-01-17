@@ -32,7 +32,7 @@ void setup() {
   }
   radio.begin();
   radio.setPALevel(RF24_PA_MIN);
-  radio.setDataRate(RF24_2MBPS);
+  radio.setDataRate(RF24_250KBPS);
   radio.setChannel(channel);
   Serial.println("normal mode");
   for (int i = 0; i < 5; i++) {
@@ -45,14 +45,14 @@ void setup() {
 
 void loop() {
 
-//TEST CODE
-uint8_t pipeNum;
-if (radio.available(&pipeNum)) {
+  //TEST CODE
+  //uint8_t pipeNum;
+  if (radio.available()) {
     char text[32] = "";
     radio.read(&text, sizeof(text));
-    Serial.print("Pipe Num: ");
-    Serial.println(pipeNum);
-    Serial.print ("text: ");
+    // Serial.print("Pipe Num: ");
+    // Serial.println(pipeNum);
+    Serial.print("text: ");
     Serial.println(text);
   }
 

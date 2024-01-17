@@ -3,22 +3,35 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-#include <EEPROM.h>
+//#include <EEPROM.h>
 
-RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
+//RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
+RF24 radio(PA9, PA8);  // nRF24L01 (CE,CSN)
+const byte address[][7] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
 
-const byte address[][6] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
 
+// const int channPin1 = 5;
+// const int channPin2 = 6;
+// const int channPin3 = 7;
+// const int channPin4 = 8;
 
-const int channPin1 = 5;
-const int channPin2 = 6;
-const int channPin3 = 7;
-const int channPin4 = 8;
+// const int addPin1 = 2;
+// const int addPin2 = 3;
+// const int addPin3 = 4;
 
-const int addPin1 = 2;
-const int addPin2 = 3;
-const int addPin3 = 4;
-uint8_t channel = 0, addrDec = 0;
+const int channPin1 = PB6;
+const int channPin2 = PB7;
+const int channPin3 = PB8;
+const int channPin4 = PB9;
+
+const int addPin1 = PA10;
+const int addPin2 = PA11;
+const int addPin3 = PA12;
+uint8_t channel = 0, addrDec = 0, sendCount = 0;
+
+const int numTransmitters = 5;                // Number of transmitters
+const unsigned long timeSlotDuration = 4000;  // Time slot duration in milliseconds
+
 
 void setup() {
   pinMode(channPin1, INPUT_PULLUP);
@@ -48,7 +61,7 @@ void setup() {
   }
   radio.begin();
   radio.setPALevel(RF24_PA_MIN);
-  radio.setDataRate(RF24_2MBPS);
+  radio.setDataRate(RF24_250KBPS);
   radio.setChannel(channel);
   radio.openWritingPipe(address[addrDec - 1]);
 
@@ -66,27 +79,31 @@ void loop() {
   data["hv"] = 0;
 
   String dataString = JSON.stringify(data);
-  //const char test[] = "leonardo";
-  radio.write(&dataString[0], dataString.length());
-  int delay_time = addrDec * 100;
-  delay(delay_time + 1000);
+
+  unsigned long currentTime = millis();
+  int currentSlot = currentTime / timeSlotDuration;  // Calculate current time slot
+  // uint8_t currentAddr = currentSlot % numTransmitters;
+
+  // Serial.print("CURRENT SLOT: ");
+  // Serial.println(currentAddr + 1);
+  if (currentSlot % numTransmitters == addrDec - 1) {  // Check if it's this transmitter's slot
+    // Transmit data
+    if (sendCount < 3) {
+      Serial.print("SLOT: ");
+      Serial.println(addrDec);
+      radio.powerUp();
+      radio.write(&dataString[0], dataString.length());
+      sendCount++;
+      Serial.println(dataString);
+    }
+  } else {
+    // Wait for the next time slot
+    //Serial.println("wait");
+    radio.powerDown();  // Conserve power during inactive slots
+    sendCount = 0;
+  }
+
 
   /////////////////////////////////////////////////
 
-  data["hv"] = 0;
-
-  dataString = JSON.stringify(data);
-  radio.write(&dataString[0], dataString.length());
-  delay(delay_time + 2000);
-
-  
-  radio.write(&dataString[0], dataString.length());
-  delay(delay_time + 2000);
-
-  
-  radio.write(&dataString[0], dataString.length());
-  delay(delay_time + 2000);
-
-  // Serial.println(channel);
-  // delay(50);  // Delay to prevent overwhelming the serial output
 }

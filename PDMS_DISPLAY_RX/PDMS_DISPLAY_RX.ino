@@ -49,8 +49,8 @@ void setup() {
     // code does not run until channel is set
   }
   radio.begin();
-  radio.setPALevel(RF24_PA_MIN);
-  radio.setDataRate(RF24_2MBPS);
+  radio.setPALevel(RF24_PA_MAX);
+  radio.setDataRate(RF24_250KBPS);
   radio.setChannel(channel);
   Serial.println("normal mode");
   for (int i = 0; i < 5; i++) {
@@ -89,29 +89,6 @@ void receiveData() {
       sr.setNoUpdate(ledIndex + 2, doc["hv"]);
       sr.updateRegisters();
 
-      // //Check if any error led is On
-      // bool anyLedOn = false;
-      // for (int i = 0; i < 15; i++) {
-      //   if (sr.get(i) == HIGH) {
-      //     anyLedOn = true;
-      //     break;
-      //   }
-      // }
-
-      // // set the alarm led to On/Off depeding on state
-      // sr.set(alarmLedPin, anyLedOn);
-      //digitalWrite(alarmLedPin, anyLedOn);
-
-      // //control buzzer if any led is On
-      // if (anyLedOn && millis() - lastBuzzTime >= 5000) {
-      //   buzzEndTime = millis() + 500;  // Set buzzer end time (adjust duration as needed)
-      //   sr.set(buzzerPin, HIGH);       // Turn on buzzer
-      //   lastBuzzTime = millis();
-      // }
-      // if (millis() >= buzzEndTime) {
-      //   sr.set(buzzerPin, LOW);  // Turn off buzzer
-      // }
-
       // Store ID if not already stored
       if (!storedIDs[comm - 1]) {
         EEPROM.write(comm - 1, 1);
@@ -120,19 +97,6 @@ void receiveData() {
 
       lastReceivedTimes[comm - 1] = millis();
 
-      // // Check for communication loss
-      // bool anyLoss = false;
-      // for (int i = 0; i < 5; i++) {
-      //   if (storedIDs[i] && millis() - lastReceivedTimes[i] >= 5000) {
-      //     anyLoss = true;
-      //     break;
-      //   }
-      // }
-      //Do something if there is communication loss
-      // set the alarm led to On/Off depeding on state
-
-
-      // sr.set(comm + 14, LOW);  //set LED low to show comm is finished
 
     } else {
       Serial.println("JSON parsing error");
@@ -144,7 +108,7 @@ void controlAlarm() {
   // Check for communication loss
   bool anyLoss = false;
   for (int i = 0; i < 5; i++) {
-    if (storedIDs[i] && millis() - lastReceivedTimes[i] >= 5000) {
+    if (storedIDs[i] && millis() - lastReceivedTimes[i] >= 30000) {
       anyLoss = true;
       uint8_t ledIndex = i * 3;  // Calculate LED index based on array position
       sr.setNoUpdate(ledIndex, LOW);
