@@ -1,3 +1,6 @@
+#include <ArduinoJson.h>
+#include <ArduinoJson.hpp>
+
 #include <Arduino_JSON.h>
 
 #include <SPI.h>
@@ -5,28 +8,28 @@
 #include <RF24.h>
 //#include <EEPROM.h>
 
-//RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
-RF24 radio(PA9, PA8);  // nRF24L01 (CE,CSN)
+RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
+//RF24 radio(PA9, PA8);  // nRF24L01 (CE,CSN)
 const byte address[][7] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
 
 
-// const int channPin1 = 5;
-// const int channPin2 = 6;
-// const int channPin3 = 7;
-// const int channPin4 = 8;
+const int channPin1 = 5;
+const int channPin2 = 6;
+const int channPin3 = 7;
+const int channPin4 = 8;
 
-// const int addPin1 = 2;
-// const int addPin2 = 3;
-// const int addPin3 = 4;
+const int addPin1 = 2;
+const int addPin2 = 3;
+const int addPin3 = 4;
 
-const int channPin1 = PB6;
-const int channPin2 = PB7;
-const int channPin3 = PB8;
-const int channPin4 = PB9;
+// const int channPin1 = PB6;
+// const int channPin2 = PB7;
+// const int channPin3 = PB8;
+// const int channPin4 = PB9;
 
-const int addPin1 = PA10;
-const int addPin2 = PA11;
-const int addPin3 = PA12;
+// const int addPin1 = PA10;
+// const int addPin2 = PA11;
+// const int addPin3 = PA12;
 uint8_t channel = 0, addrDec = 0, sendCount = 0;
 
 const int numTransmitters = 5;                // Number of transmitters
@@ -71,14 +74,17 @@ void setup() {
 void loop() {
 
   //TEST CODE
-  JSONVar data;
+ // JSONVar data;
+  JsonDocument data;
 
   data["comm"] = addrDec;
   data["f"] = 0;
   data["d"] = 0;
   data["hv"] = 0;
 
-  String dataString = JSON.stringify(data);
+  String dataString;
+  // String dataString = JSON.stringify(data);
+  serializeJson(data, dataString);
 
   unsigned long currentTime = millis();
   int currentSlot = currentTime / timeSlotDuration;  // Calculate current time slot
