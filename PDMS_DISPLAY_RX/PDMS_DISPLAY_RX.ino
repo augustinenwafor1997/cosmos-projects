@@ -8,15 +8,26 @@
 
 #include <ShiftRegister74HC595.h>
 
-RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
+// create a global shift register object
+// parameters: <number of shift registers> (data pin, clock pin, latch pin)
+ShiftRegister74HC595<3> sr(PA1, PA3, PA2);
 
-const byte address[][6] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
+//RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
+RF24 radio(PB0, PB1);  // nRF24L01 (CE,CSN)
+
+//const byte address[][6] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
+uint8_t address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node" };
 
 
-const int switchPin1 = 5;
-const int switchPin2 = 6;
-const int switchPin3 = 7;
-const int switchPin4 = 8;
+// const int switchPin1 = 5;
+// const int switchPin2 = 6;
+// const int switchPin3 = 7;
+// const int switchPin4 = 8;
+
+const int switchPin1 = PB6;
+const int switchPin2 = PB7;
+const int switchPin3 = PB8;
+const int switchPin4 = PB9;
 
 const int alarmLedPin = 20;
 const int buzzerPin = 21;
@@ -30,21 +41,26 @@ bool alarmFlag = false;
 unsigned long alarmCheckStartTime = 0;
 int alarmCheckCount = 0;
 
-ShiftRegister74HC595<3> sr(2, 3, 4);
+// ShiftRegister74HC595<3> sr(2, 3, 4);
+//ShiftRegister74HC595<3> sr(PA1, PA3, PA2);
 uint8_t channel = 0;
 JsonDocument doc;
 void setup() {
-  pinMode(switchPin1, INPUT_PULLUP);
-  pinMode(switchPin2, INPUT_PULLUP);
-  pinMode(switchPin3, INPUT_PULLUP);
-  pinMode(switchPin4, INPUT_PULLUP);
-  Serial.begin(9600);
-  channel += digitalRead(switchPin1) * 8;  // 2^3
-  channel += digitalRead(switchPin2) * 4;  // 2^2
-  channel += digitalRead(switchPin3) * 2;  // 2^1
-  channel += digitalRead(switchPin4) * 1;  // 2^0
-  Serial.print("Channel: ");
-  Serial.println(channel);
+  //sr.set(0, HIGH);
+  pinMode(switchPin1, INPUT_PULLDOWN);
+  pinMode(switchPin2, INPUT_PULLDOWN);
+  pinMode(switchPin3, INPUT_PULLDOWN);
+  pinMode(switchPin4, INPUT_PULLDOWN);
+  //   Serial.begin(9600);
+  channel += digitalRead(switchPin4) * 8;  // 2^3
+  channel += digitalRead(switchPin3) * 4;  // 2^2
+  channel += digitalRead(switchPin2) * 2;  // 2^1
+  channel += digitalRead(switchPin1) * 1;  // 2^0
+
+  //my debugger
+  // if (channel == 1) {
+  //   sr.set(0, HIGH);
+  // }
   while (channel < 1) {
     // code does not run until channel is set
   }
@@ -52,7 +68,7 @@ void setup() {
   radio.setPALevel(RF24_PA_MAX);
   radio.setDataRate(RF24_250KBPS);
   radio.setChannel(channel);
-  Serial.println("normal mode");
+  //   Serial.println("normal mode");
   for (int i = 0; i < 5; i++) {
     radio.openReadingPipe(i + 1, address[i]);
     delay(5);
@@ -60,7 +76,7 @@ void setup() {
 
   radio.startListening();
 
-  // Load stored IDs from EEPROM
+  //   // Load stored IDs from EEPROM
   for (int i = 0; i < 5; i++) {
     storedIDs[i] = EEPROM.read(i) == 1;
   }
@@ -68,18 +84,19 @@ void setup() {
 
 void loop() {
 
-  receiveData();
-  controlAlarm();
+   receiveData();
+  // controlAlarm();
 }
 void receiveData() {
   if (radio.available()) {
+   // sr.set(0, HIGH);
 
     char text[32] = "";
     radio.read(&text, sizeof(text));
 
     // JsonDocument doc;
     DeserializationError error = deserializeJson(doc, text);
-    Serial.println(text);
+   // Serial.println(text);
     if (!error) {
       uint8_t comm = doc["comm"];
       uint8_t ledIndex = (comm - 1) * 3;  // Calculate LED index based on pipe
@@ -99,7 +116,8 @@ void receiveData() {
 
 
     } else {
-      Serial.println("JSON parsing error");
+      //Serial.println("JSON parsing error");
+      //sr.set(0, HIGH);
     }
   }
 }

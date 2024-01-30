@@ -3,15 +3,22 @@
 #include <RF24.h>
 #include <EEPROM.h>
 
-RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
+//RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
+RF24 radio(PB0, PB1);  // nRF24L01 (CE,CSN)
 
-const byte address[][6] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
+//const byte address[][6] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
+uint8_t address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node" };
 
 
-const int switchPin1 = 5;
-const int switchPin2 = 6;
-const int switchPin3 = 7;
-const int switchPin4 = 8;
+// const int switchPin1 = 5;
+// const int switchPin2 = 6;
+// const int switchPin3 = 7;
+// const int switchPin4 = 8;
+
+const int switchPin1 = PB6;
+const int switchPin2 = PB7;
+const int switchPin3 = PB8;
+const int switchPin4 = PB9;
 
 uint8_t channel = 0;
 
@@ -21,10 +28,10 @@ void setup() {
   pinMode(switchPin3, INPUT_PULLUP);
   pinMode(switchPin4, INPUT_PULLUP);
   Serial.begin(9600);
-  channel += digitalRead(switchPin1) * 8;  // 2^3
-  channel += digitalRead(switchPin2) * 4;  // 2^2
-  channel += digitalRead(switchPin3) * 2;  // 2^1
-  channel += digitalRead(switchPin4) * 1;  // 2^0
+  channel += digitalRead(switchPin4) * 8;  // 2^3
+  channel += digitalRead(switchPin3) * 4;  // 2^2
+  channel += digitalRead(switchPin2) * 2;  // 2^1
+  channel += digitalRead(switchPin1) * 1;  // 2^0
   Serial.print("Channel: ");
   Serial.println(channel);
   while (channel < 1) {
