@@ -29,8 +29,8 @@ const int switchPin2 = PB7;
 const int switchPin3 = PB8;
 const int switchPin4 = PB9;
 
-const int alarmLedPin = 20;
-const int buzzerPin = 21;
+const int alarmLedPin = 21;
+const int buzzerPin = 20;
 
 unsigned long lastBuzzTime = 0, buzzEndTime = 0;
 unsigned long lastReceivedTimes[5] = { 0 };  // Track last received times for each ID
@@ -85,7 +85,14 @@ void setup() {
 void loop() {
 
    receiveData();
-  // controlAlarm();
+  controlAlarm();
+  //sr.setAllLow();
+  // sr.set(buzzerPin, HIGH); 
+  // sr.set(0, HIGH); 
+  // delay(1000);
+  // sr.set(buzzerPin, LOW);  
+  // sr.set(0, LOW);
+  // delay(1000);
 }
 void receiveData() {
   if (radio.available()) {
@@ -118,6 +125,7 @@ void receiveData() {
     } else {
       //Serial.println("JSON parsing error");
       //sr.set(0, HIGH);
+      return;
     }
   }
 }

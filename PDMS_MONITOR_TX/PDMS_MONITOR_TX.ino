@@ -14,23 +14,23 @@ RF24 radio(10, 9);  // nRF24L01 (CE,CSN)
 uint8_t address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node" };
 
 
-// const int channPin1 = 5;
-// const int channPin2 = 6;
-// const int channPin3 = 7;
-// const int channPin4 = 8;
+const int channPin1 = 5;
+const int channPin2 = 6;
+const int channPin3 = 7;
+const int channPin4 = 8;
 
-// const int addPin1 = 2;
-// const int addPin2 = 3;
-// const int addPin3 = 4;
+const int addPin1 = 2;
+const int addPin2 = 3;
+const int addPin3 = 4;
 
-const int channPin1 = PB6;
-const int channPin2 = PB7;
-const int channPin3 = PB8;
-const int channPin4 = PB9;
+// const int channPin1 = PB6;
+// const int channPin2 = PB7;
+// const int channPin3 = PB8;
+// const int channPin4 = PB9;
 
-const int addPin1 = PA10;
-const int addPin2 = PA11;
-const int addPin3 = PA12;
+// const int addPin1 = PA10;
+// const int addPin2 = PA11;
+// const int addPin3 = PA12;
 
 uint8_t channel = 0, addrDec = 0, sendCount = 0;
 

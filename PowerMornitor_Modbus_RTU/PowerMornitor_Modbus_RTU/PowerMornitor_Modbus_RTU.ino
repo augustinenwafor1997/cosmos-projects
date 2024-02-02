@@ -1,12 +1,16 @@
+#include <ArduinoJson.h>
+#include <ArduinoJson.hpp>
+
 #include <SimpleModbusMaster.h>
-#include <Arduino_JSON.h>
+//#include <Arduino_JSON.h>
 
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
 
-RF24 radio(PB15, PA8);  // nRF24L01 (CE,CSN)
-const byte address[][7] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
+RF24 radio(PA10, PA9);  // nRF24L01 (CE,CSN)
+// const byte address[][7] = { "00001A", "00001B", "00001C", "00001D", "00001E" };
+uint8_t address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node" };
 
 
 //////////////////// Voltage quality information ///////////////
@@ -28,7 +32,7 @@ const long transmissionInterval = 3000;  // Interval for transmitting states (in
 
 // used to toggle the receive/transmit pin on the driver
 #define TxEnablePin PB1
-#define LED PB0
+#define LED_BUILTIN PC13
 #define channPin1 PB6
 #define channPin2 PB7
 #define channPin3 PB8
@@ -99,14 +103,15 @@ bool checkPhaseFailure(float phase1, float phase2, float phase3) {
 void transmitStates(bool highVoltage, bool lowVoltage, bool phaseImbalance, bool phaseFailure) {
   // Implement your transmission logic based on your communication module 
   //TEST CODE
-  JSONVar data;
+  JsonDocument data;
 
   data["comm"] = addrDec;
-  data["f"] = phaseFailure;
-  data["d"] = phaseImbalance;
-  data["hv"] = highVoltage;
+  data["f"] = phaseFailure ? 1 : 0;
+  data["d"] = phaseImbalance ? 1 : 0;
+  data["hv"] = highVoltage ? 1 : 0;
 
-  String dataString = JSON.stringify(data);
+  String dataString; 
+  serializeJson(data, dataString);
 
   unsigned long currentTime = millis();
   int currentSlot = currentTime / timeSlotDuration;  // Calculate current time slot
@@ -133,19 +138,20 @@ void transmitStates(bool highVoltage, bool lowVoltage, bool phaseImbalance, bool
 }
 
 //                      RX    TX
-HardwareSerial Serial2(PA3, PA2);
+//HardwareSerial Serial2(PA3, PA2);
 
 void setup() {
 
-  pinMode(LED, OUTPUT);
-  pinMode(channPin1, INPUT_PULLUP);
-  pinMode(channPin2, INPUT_PULLUP);
-  pinMode(channPin3, INPUT_PULLUP);
-  pinMode(channPin4, INPUT_PULLUP);
-  pinMode(addPin1, INPUT_PULLUP);
-  pinMode(addPin2, INPUT_PULLUP);
-  pinMode(addPin3, INPUT_PULLUP);
-  Serial.begin(9600);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
+  pinMode(channPin1, INPUT_PULLDOWN);
+  pinMode(channPin2, INPUT_PULLDOWN);
+  pinMode(channPin3, INPUT_PULLDOWN);
+  pinMode(channPin4, INPUT_PULLDOWN);
+  pinMode(addPin1, INPUT_PULLDOWN);
+  pinMode(addPin2, INPUT_PULLDOWN);
+  pinMode(addPin3, INPUT_PULLDOWN);
+  //Serial.begin(9600);
   // Initialize each packet
   modbus_construct(&packets[PACKET1], 1, READ_HOLDING_REGISTERS, 512, 2, 1);
   modbus_construct(&packets[PACKET2], 1, READ_HOLDING_REGISTERS, 514, 2, 3);
@@ -154,21 +160,28 @@ void setup() {
   // Initialize the Modbus Finite State Machine
   modbus_configure(&Serial2, baud, SERIAL_8E1, timeout, polling, retry_count, TxEnablePin, packets, TOTAL_NO_OF_PACKETS, regs);
 
-  // settup channels and addresses
-  channel += digitalRead(channPin1) * 8;  // 2^3
-  channel += digitalRead(channPin2) * 4;  // 2^2
-  channel += digitalRead(channPin3) * 2;  // 2^1
-  channel += digitalRead(channPin4) * 1;  // 2^0
-  Serial.print("Channel: ");
-  Serial.println(channel);
+  //settup channels and addresses
+  channel += digitalRead(channPin4) * 8;  // 2^3
+  channel += digitalRead(channPin3) * 4;  // 2^2
+  channel += digitalRead(channPin2) * 2;  // 2^1
+  channel += digitalRead(channPin1) * 1;  // 2^0
+  // Serial.print("Channel: ");
+  // Serial.println(channel);
+  
+  // if(channel == 1){
+  //    digitalWrite(LED_BUILTIN, LOW);
+  //}
   while (channel < 1) {
     // code does not run until channel is set
   }
   addrDec += digitalRead(addPin1) * 4;
   addrDec += digitalRead(addPin2) * 2;
   addrDec += digitalRead(addPin3) * 1;
-  Serial.print("Address  in decimal: ");
-  Serial.println(addrDec);
+  // Serial.print("Address  in decimal: ");
+  // Serial.println(addrDec);
+  // if(addrDec == 1){
+  //   digitalWrite(LED_BUILTIN, LOW);
+  // }
   while (addrDec < 1 || addrDec > 5) {
     // code does not if address is not set
   }
@@ -182,6 +195,11 @@ void setup() {
 }
 
 void loop() {
+  //digitalWrite(LED, LOW);
+  // digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
+  // delay(1000);
+  // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED off by making the voltage LOW
+  // delay(1000);
   unsigned long currentMillis = millis();
   modbus_update();
 
@@ -198,12 +216,12 @@ void loop() {
     phaseFailure = checkPhaseFailure(phase1Voltage, phase2Voltage, phase3Voltage);
 
     // Print results to Serial Monitor
-    Serial.print("PHASE 1 Voltage: ");
-    Serial.println(phase1Voltage);
-    Serial.print("PHASE 2 Voltage: ");
-    Serial.println(phase2Voltage);
-    Serial.print("PHASE 3 voltage: ");
-    Serial.println(phase3Voltage);
+    // Serial.print("PHASE 1 Voltage: ");
+    // Serial.println(phase1Voltage);
+    // Serial.print("PHASE 2 Voltage: ");
+    // Serial.println(phase2Voltage);
+    // Serial.print("PHASE 3 voltage: ");
+    // Serial.println(phase3Voltage);
   }
 
   // Implement your transmission function here
