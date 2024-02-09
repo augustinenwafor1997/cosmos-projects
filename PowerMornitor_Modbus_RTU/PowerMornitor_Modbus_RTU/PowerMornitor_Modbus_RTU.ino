@@ -14,9 +14,9 @@ uint8_t address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node" };
 
 
 //////////////////// Voltage quality information ///////////////
-#define HIGH_VOLTAGE_THRESHOLD 220    // Set your high voltage threshold
+#define HIGH_VOLTAGE_THRESHOLD 275    // Set your high voltage threshold
 #define LOW_VOLTAGE_THRESHOLD 180     // Set your low voltage threshold
-#define PHASE_IMBALANCE_THRESHOLD 10  // Set your phase imbalance threshold
+#define PHASE_IMBALANCE_THRESHOLD 20  // Set your phase imbalance threshold
 #define PHASE_FAILURE_THRESHOLD 100   // Set your phase failure threshold
 
 //////////////transmission window //////////////////
@@ -195,14 +195,14 @@ void setup() {
 }
 
 void loop() {
-  //digitalWrite(LED, LOW);
-  // digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
-  // delay(1000);
-  // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED off by making the voltage LOW
-  // delay(1000);
   unsigned long currentMillis = millis();
   modbus_update();
 
+  if (currentMillis < previousMillis) {// handle overflow
+    // Overflow occurred
+    previousMillis = 0;
+  }
+  
   if (currentMillis - previousMillis >= transmissionInterval) {
     previousMillis = currentMillis;  // Save the last time a transmission occurred
     float phase1Voltage = convertToVoltage(1);
