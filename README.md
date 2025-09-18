@@ -165,6 +165,14 @@ To explore or run these projects:
    - Monitor via Serial (9600 or 115200 baud) for debug insights.
 5. **Issues?** File a GitHub issue or reach out (details below).
 
+## Hardware Schematics & PCB
+
+- **Automatic Irrigation Project**  
+  [View Schematic & PCB](https://oshwlab.com/augustinenwafor1997/auto-irrigation-schematic)
+
+- **Custom Soil Moisture Sensor**  
+  [View Schematic & PCB](https://oshwlab.com/augustinenwafor1997/soil-moisture-sensor)
+
 ## 🔮 Future Plans
 - Add schematics for each project.
 - Include video demos showcasing hardware in action.
