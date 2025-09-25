@@ -170,6 +170,9 @@ To explore or run these projects:
 - **Automatic Irrigation Project**  
   [View Schematic & PCB](https://oshwlab.com/augustinenwafor1997/auto-irrigation-schematic)
 
+- **Final Version of Irrigation Project (iManager)**  
+  [View Schematic & PCB]( https://oshwlab.com/agbarojipromiseug/imaneger-v1)
+  
 - **Custom Soil Moisture Sensor**  
   [View Schematic & PCB](https://oshwlab.com/augustinenwafor1997/soil-moisture-sensor)
 
