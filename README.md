@@ -1,6 +1,6 @@
 # Embedded Systems Projects
 
-![Automation Banner](GettyImages-1187010833-1280x720.jpg)  
+![Automation Banner](jungle_riders.jpg)  
 
 Welcome to **Cosmos**, a public repository showcasing my embedded systems and automation projects developed with Arduino-compatible platforms. These projects reflect my professional experience in designing robust, deployable solutions for real-world applications such as access control, wireless monitoring, secure data encoding, and automated control systems. Built with industry-standard technologies, they demonstrate my expertise in hardware-software integration, wireless communication, user interfaces, and fault-tolerant design—ideal for IoT, industrial automation, and secure systems.
 
