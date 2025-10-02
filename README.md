@@ -10,7 +10,33 @@ With a background in technology management and hands-on embedded development, I'
 
 Below is a detailed breakdown of the projects in this repository. Each is designed for practical use cases, leveraging industry-standard hardware and software. This README will be updated as more projects are added.
 
-### 1. Access Control System (ACS) with QR Code Printer
+### 1. iManager – Smart Irrigation Controller
+
+**Description:**  
+iManager is a smart irrigation controller developed to help farmers optimize water usage and improve crop yield. The project started as my final year university research, where it won **2nd Best Engineering Final Year Project in Nigeria (2019)**. It was later refined into “Nyammiri,” which won the **Farmers for the Future (BATNF) Grant (2021)**, and finally evolved into iManager — a robust, field-tested solution demonstrated in the greenhouse at **Enugu State University of Science and Technology, Faculty of Agriculture**.  
+
+**Key Features:**  
+- **Advanced Scheduling:** Supports up to 12 irrigation schedules per day with independent start/stop times.  
+- **Multi-Zone Irrigation:** Controls up to 4 solenoid latch valves for different farm zones.  
+- **Remote SMS Control:** Farmers can securely set, change, start, or stop irrigation using SMS commands, without needing internet access.  
+- **GLCD Menu Interface:** Custom-designed GUI with icons for network bars, battery, pumps, timers, and moisture sensors, navigated via 5 physical buttons.  
+- **Hydroponics Cycle Mode:** Allows periodic nutrient recirculation for hydroponic systems.  
+- **Security:** Password-protected SMS commands to prevent unauthorized access.  
+- **Power Efficiency:** Integrated battery charging circuit and energy-saving DC latch valves.  
+
+**Technologies:**  
+- **Hardware:** STM32 microcontroller, custom capacitive soil moisture sensor ([Design here](https://oshwlab.com/augustinenwafor1997/soil-moisture-sensor)), controller motherboard with integrated battery management and valve drivers ([Schematic here](https://oshwlab.com/agbarojipromiseug/imaneger-v1)).  
+- **Firmware:** Written in C/C++ (Arduino STM32 Core), using libraries like U8g2 (GLCD graphics), STM32RTC, Chrono, and TimeLib.  
+- **Communication:** GSM module for SMS messaging, password-authenticated parsing engine for remote commands.  
+
+**Use Case:**  
+Designed for rural farmers with limited internet access, iManager provides an accessible, affordable, and efficient way to manage irrigation across diverse crop zones. By combining local scheduling, soil moisture sensing, and remote SMS control, it reduces water waste, improves crop yields, and adapts to real-world farming challenges.  
+
+**Source**: [iManager](iManagerV1)
+
+➡️ [Read full project details »](iManagerV1/README.md)  
+
+### 2. Access Control System (ACS) with QR Code Printer
 **Description**: A comprehensive access control system for paid facilities (e.g., public restrooms), featuring a QR code printer for ticket generation and a main ACS controller for scanning, validation, and door control. Customers pay to receive a printed QR code ticket; the ACS scans it to grant timed entry via solenoid-locked doors, with logging and remote management via ESP8266.
 
 **Key Features**:
@@ -29,7 +55,7 @@ Below is a detailed breakdown of the projects in this repository. Each is design
 
 **Source**: [ACS_MAIN](ACS_MAIN), [PRINTER_CODE](PRINTER_CODE)
 
-### 2. Jungle Rider Timer System
+### 3. Jungle Rider Timer System
 **Description**: An RFID-based access control and timer system for vehicle or ride applications (e.g., rental ATVs or bikes). Users authenticate via RFID to activate a relay-controlled power output for a configurable duration, displayed in real-time on a seven-segment display. Includes a menu for runtime adjustments and battery monitoring.
 
 **Key Features**:
@@ -47,7 +73,7 @@ Below is a detailed breakdown of the projects in this repository. Each is design
 
 **Source**: [JUNGLE_RIDER](JUNGLE_RIDER_TIMER_FK103M5_ZET6/JUNGLE_RIDER_TIMER_FK103M5_ZET6)
 
-### 3. Power Monitor Modbus RTU
+### 4. Power Monitor Modbus RTU
 **Description**: A power quality monitoring system that reads three-phase voltage data via Modbus RTU and transmits status updates (high voltage, low voltage, phase imbalance, phase failure) wirelessly to a receiver using nRF24L01. Configurable via DIP switches for channel and address, it operates in time-slotted transmission to avoid collisions.
 
 **Key Features**:
@@ -65,7 +91,7 @@ Below is a detailed breakdown of the projects in this repository. Each is design
 
 **Source**: [PowerMornitor_Modbus_RTU](PowerMornitor_Modbus_RTU/PowerMornitor_Modbus_RTU)
 
-### 4. Power Monitor Wireless Receiver
+### 5. Power Monitor Wireless Receiver
 **Description**: A wireless receiver for monitoring up to five remote sensor nodes in a distributed system. It receives JSON-formatted status updates via nRF24L01 radio, visualizes node states (fault, data, voltage) on an LED dashboard using shift registers, and triggers alarms for errors or communication loss.
 
 **Key Features**:
@@ -83,7 +109,7 @@ Below is a detailed breakdown of the projects in this repository. Each is design
 
 **Source**: [Power Monitor_RX](PDMS_DISPLAY_RX)
 
-### 5. Secure Token Encoder
+### 6. Secure Token Encoder
 **Description**: A utility for generating secure, parity-checked tokens from random seeds, designed for applications requiring error detection in data transmission (e.g., RFID or wireless protocols). Outputs structured char arrays combining UID, token, pair, and error codes.
 
 **Key Features**:
@@ -100,7 +126,7 @@ Below is a detailed breakdown of the projects in this repository. Each is design
 
 **Source**: [Encode.ino](PRINTER_CODE/encode.ino)
 
-### 6. QR Code Printer and OLED Display
+### 7. QR Code Printer and OLED Display
 **Description**: A system for generating and displaying QR codes on an OLED screen, with an option to print them using a thermal printer. Integrates with the Secure Token Encoder to create scannable tokens, used in the ACS project for ticketing.
 
 **Key Features**:
@@ -117,7 +143,7 @@ Below is a detailed breakdown of the projects in this repository. Each is design
 
 **Source**: [PRINTER_CODE](PRINTER_CODE)
 
-### 7. Elenktis Pump Controller
+### 8. Elenktis Pump Controller
 **Description**: An automated pump control system with manual and automatic modes, designed for dual-pump setups (e.g., water management). Uses a float switch to detect tank levels and alternates pumps hourly in auto mode to balance wear, with persistent mode storage.
 
 **Key Features**:
