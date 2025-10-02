@@ -26,7 +26,7 @@ The system helps farmers save water and improve crop yield by combining soil moi
 - **Hardware**
   - STM32 microcontroller core  
   - Custom capacitive soil moisture sensor ([Design here](https://oshwlab.com/augustinenwafor1997/soil-moisture-sensor))  
-  - Motherboard with integrated battery charging and power distribution ([Schematic here](https://oshwlab.com/augustinenwafor1997/auto-irrigation-schematic))  
+  - Motherboard with integrated battery charging and power distribution ([Schematic here](https://oshwlab.com/agbarojipromiseug/imaneger-v1))  
   - Energy-efficient DC latch solenoid valves  
 
 ---
