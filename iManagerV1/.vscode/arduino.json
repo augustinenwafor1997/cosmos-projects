@@ -1,0 +1,7 @@
+{
+    "configuration": "pnum=Generic_F401CC,upload_method=swdMethod,xserial=generic,usb=none,xusb=FS,opt=osstd,rtlib=nano",
+    "board": "STM32:stm32:GenF4",
+    "port": "COM4",
+    "sketch": "iManagerV1.ino",
+    "output": "../iManagerV1/build"
+}

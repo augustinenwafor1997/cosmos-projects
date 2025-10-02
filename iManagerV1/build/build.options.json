@@ -1,0 +1,11 @@
+{
+  "additionalFiles": "..,..,..,..",
+  "builtInLibrariesFolders": "C:\\Program Files (x86)\\Arduino\\libraries",
+  "builtInToolsFolders": "C:\\Program Files (x86)\\Arduino\\tools-builder,C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr,C:\\Users\\HP\\AppData\\Local\\Arduino15\\packages",
+  "customBuildProperties": "build.path=c:\\Users\\HP\\OneDrive\\arduino\\iManagerV1\\build,build.warn_data_percentage=75,runtime.tools.STM32Tools.path=C:\\Users\\HP\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\STM32Tools\\1.4.0,runtime.tools.STM32Tools-1.4.0.path=C:\\Users\\HP\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\STM32Tools\\1.4.0,runtime.tools.xpack-arm-none-eabi-gcc.path=C:\\Users\\HP\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\xpack-arm-none-eabi-gcc\\9.2.1-1.1,runtime.tools.xpack-arm-none-eabi-gcc-9.2.1-1.1.path=C:\\Users\\HP\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\xpack-arm-none-eabi-gcc\\9.2.1-1.1,runtime.tools.CMSIS.path=C:\\Users\\HP\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\CMSIS\\5.5.1,runtime.tools.CMSIS-5.5.1.path=C:\\Users\\HP\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\CMSIS\\5.5.1",
+  "fqbn": "STM32:stm32:GenF4:pnum=Generic_F401CC,upload_method=swdMethod,xserial=generic,usb=none,xusb=FS,opt=osstd,rtlib=nano",
+  "hardwareFolders": "C:\\Program Files (x86)\\Arduino\\hardware,C:\\Users\\HP\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "C:\\Users\\HP\\OneDrive\\arduino\\libraries",
+  "runtime.ide.version": "10812",
+  "sketchLocation": "c:\\Users\\HP\\OneDrive\\arduino\\iManagerV1\\iManagerV1.ino"
+}
